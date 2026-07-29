@@ -49,7 +49,7 @@ jobs:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
-        run: ./gradlew bundleRelease
+        run: ./gradlew bundleRelease -Pandroid.aapt2FromMavenOverride=
 
       - name: Save Service Account Key File
         if: ${{ secrets.PLAY_CONSOLE_JSON_KEY != '' }}
