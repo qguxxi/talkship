@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_continue">Tiếp tục</string>
+    <string name="onboarding_step_one">01 / Giới thiệu</string>
+    <string name="onboarding_logo_description">Biểu tượng Talkship</string>
+
+    <string name="onboarding_welcome_eyebrow">Giới thiệu Talkship</string>
+    <string name="onboarding_welcome_title">Nói tự nhiên.\nHiểu tức thì.</string>
+    <string name="onboarding_welcome_body">Không gian chuyên biệt cho dịch thoại trực tiếp—được thiết kế để cuộc trò chuyện luôn trôi chảy.</string>
+    <string name="onboarding_welcome_source">Xin chào, rất vui được gặp bạn.</string>
+    <string name="onboarding_welcome_translation">Hello, it’s great to meet you.</string>
+    <string name="onboarding_welcome_live">Dịch trực tiếp</string>
+
+    <string name="language_step_two">02 / Ngôn ngữ</string>
+    <string name="language_eyebrow">Ngôn ngữ giao diện</string>
+    <string name="language_title">Chọn ngôn ngữ\nứng dụng</string>
+    <string name="language_body">Chọn ngôn ngữ ưu tiên cho giao diện Talkship. Bạn có thể thay đổi bất kỳ lúc nào trong Cài đặt.</string>
+    <string name="language_continue">Lưu &amp; Tiếp tục</string>
+
+    <string name="permissions_step_three">03 / Cấp quyền</string>
+    <string name="permissions_eyebrow">Thiết lập truy cập</string>
+    <string name="permissions_title">Cấp quyền ứng dụng\nđể bắt đầu</string>
+    <string name="permissions_body">Talkship cần quyền truy cập micro để dịch giọng nói theo thời gian thực và quyền thông báo để cập nhật trạng thái phiên dịch.</string>
+    <string name="permission_mic_title">Truy cập Micro</string>
+    <string name="permission_mic_badge">BẮT BUỘC</string>
+    <string name="permission_mic_desc">Dùng để thu âm giọng nói phục vụ nhận diện và dịch thuật trực tiếp.</string>
+    <string name="permission_notif_title">Quyền Thông báo</string>
+    <string name="permission_notif_badge">KHUYÊN DÙNG</string>
+    <string name="permission_notif_desc">Cập nhật thông tin phiên dịch đang hoạt động và trạng thái ứng dụng ngầm.</string>
+    <string name="permission_grant_action">Cấp quyền</string>
+    <string name="permission_granted_status">Đã cấp quyền</string>
+    <string name="permissions_continue_to_login">Tiếp tục đăng nhập</string>
+    <string name="permissions_grant_all">Cấp các quyền</string>
+</resources>

@@ -1,0 +1,174 @@
+package com.artifee.talkship
+
+import android.content.Context
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
+import androidx.activity.compose.LocalActivityResultRegistryOwner
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
+import com.artifee.talkship.core.designsystem.theme.TalkshipTheme
+import com.artifee.talkship.feature.auth.TalkshipSignInRoute
+import com.artifee.talkship.feature.onboarding.TalkshipAppLanguageRoute
+import com.artifee.talkship.feature.onboarding.TalkshipOnboardingRoute
+import com.artifee.talkship.feature.onboarding.TalkshipPermissionRoute
+import com.artifee.talkship.feature.onboarding.updateAppLocale
+import kotlinx.coroutines.launch
+
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        setContent {
+            val baseContext = LocalContext.current
+            val preferences = remember {
+                getSharedPreferences(ONBOARDING_PREFERENCES, Context.MODE_PRIVATE)
+            }
+            val initialLanguage = remember {
+                preferences.getString(KEY_APP_LANGUAGE, "vi") ?: "vi"
+            }
+            var currentAppLanguage by rememberSaveable { mutableStateOf(initialLanguage) }
+
+            val localizedContext = remember(currentAppLanguage) {
+                updateAppLocale(baseContext, currentAppLanguage)
+            }
+
+            CompositionLocalProvider(
+                LocalContext provides localizedContext,
+                LocalActivityResultRegistryOwner provides this
+            ) {
+                TalkshipTheme {
+                    TalkshipApp(
+                        onLanguageChanged = { newLanguage ->
+                            currentAppLanguage = newLanguage
+                        }
+                    )
+                }
+            }
+        }
+    }
+
+    @Composable
+    private fun TalkshipApp(
+        onLanguageChanged: (String) -> Unit
+    ) {
+        val preferences = remember {
+            getSharedPreferences(ONBOARDING_PREFERENCES, Context.MODE_PRIVATE)
+        }
+
+        val initialPage = remember {
+            when {
+                preferences.getBoolean(KEY_PERMISSIONS_COMPLETED, false) -> 3
+                preferences.getBoolean(KEY_LANGUAGE_COMPLETED, false) -> 2
+                preferences.getBoolean(KEY_ONBOARDING_COMPLETED, false) -> 1
+                else -> 0
+            }
+        }
+
+        val pagerState = rememberPagerState(
+            initialPage = initialPage,
+            pageCount = { 4 }
+        )
+        val coroutineScope = rememberCoroutineScope()
+
+        if (pagerState.currentPage > 0) {
+            BackHandler {
+                coroutineScope.launch {
+                    pagerState.animateScrollToPage(pagerState.currentPage - 1)
+                }
+            }
+        }
+
+        HorizontalPager(
+            state = pagerState,
+            userScrollEnabled = true
+        ) { page ->
+            when (page) {
+                0 -> TalkshipOnboardingRoute(
+                    onComplete = {
+                        saveOnboardingCompleted()
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(1)
+                        }
+                    }
+                )
+                1 -> TalkshipAppLanguageRoute(
+                    onComplete = { selectedLanguage ->
+                        saveAppLanguage(selectedLanguage)
+                        onLanguageChanged(selectedLanguage)
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(2)
+                        }
+                    },
+                    onLanguageSelectionChanged = { newLang ->
+                        onLanguageChanged(newLang)
+                    }
+                )
+                2 -> TalkshipPermissionRoute(
+                    onComplete = {
+                        savePermissionsCompleted()
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(3)
+                        }
+                    }
+                )
+                3 -> TalkshipSignInRoute(
+                    onGoogleSignIn = {
+                        // Authentication provider integration is intentionally
+                        // deferred until the sign-in UI is approved.
+                    },
+                    onEmailContinue = {
+                        // Email authentication will be wired in the next auth step.
+                    }
+                )
+            }
+        }
+    }
+
+    private fun saveOnboardingCompleted() {
+        getSharedPreferences(
+            ONBOARDING_PREFERENCES,
+            Context.MODE_PRIVATE
+        ).edit()
+            .putBoolean(KEY_ONBOARDING_COMPLETED, true)
+            .apply()
+    }
+
+    private fun saveAppLanguage(languageCode: String) {
+        getSharedPreferences(
+            ONBOARDING_PREFERENCES,
+            Context.MODE_PRIVATE
+        ).edit()
+            .putString(KEY_APP_LANGUAGE, languageCode)
+            .putBoolean(KEY_LANGUAGE_COMPLETED, true)
+            .apply()
+    }
+
+    private fun savePermissionsCompleted() {
+        getSharedPreferences(
+            ONBOARDING_PREFERENCES,
+            Context.MODE_PRIVATE
+        ).edit()
+            .putBoolean(KEY_PERMISSIONS_COMPLETED, true)
+            .apply()
+    }
+
+    private companion object {
+        const val ONBOARDING_PREFERENCES = "talkship_onboarding"
+        const val KEY_ONBOARDING_COMPLETED = "completed"
+        const val KEY_LANGUAGE_COMPLETED = "language_completed"
+        const val KEY_APP_LANGUAGE = "app_language"
+        const val KEY_PERMISSIONS_COMPLETED = "permissions_completed"
+    }
+}

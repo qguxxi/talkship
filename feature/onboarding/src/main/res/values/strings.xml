@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_continue">Continue</string>
+    <string name="onboarding_step_one">01 / Welcome</string>
+    <string name="onboarding_logo_description">Talkship logo</string>
+
+    <string name="onboarding_welcome_eyebrow">Meet Talkship</string>
+    <string name="onboarding_welcome_title">Speak naturally.\nUnderstand instantly.</string>
+    <string name="onboarding_welcome_body">A focused space for real-time voice translation—built to keep the conversation moving.</string>
+    <string name="onboarding_welcome_source">Xin chào, rất vui được gặp bạn.</string>
+    <string name="onboarding_welcome_translation">Hello, it’s great to meet you.</string>
+    <string name="onboarding_welcome_live">Live translation</string>
+
+    <string name="language_step_two">02 / Language</string>
+    <string name="language_eyebrow">Interface Language</string>
+    <string name="language_title">Choose your\napp language</string>
+    <string name="language_body">Select your preferred language for the Talkship interface. You can change this anytime in Settings.</string>
+    <string name="language_continue">Save &amp; Continue</string>
+
+    <string name="permissions_step_three">03 / Permissions</string>
+    <string name="permissions_eyebrow">Access Setup</string>
+    <string name="permissions_title">Grant permissions\nto get started</string>
+    <string name="permissions_body">Talkship requires microphone access to translate your voice in real time, and notifications for session updates.</string>
+    <string name="permission_mic_title">Microphone Access</string>
+    <string name="permission_mic_badge">REQUIRED</string>
+    <string name="permission_mic_desc">Used to capture speech for real-time translation and transcription.</string>
+    <string name="permission_notif_title">Notification Access</string>
+    <string name="permission_notif_badge">RECOMMENDED</string>
+    <string name="permission_notif_desc">Keeps you informed about active translation sessions and background updates.</string>
+    <string name="permission_grant_action">Grant Access</string>
+    <string name="permission_granted_status">Granted</string>
+    <string name="permissions_continue_to_login">Continue to Sign In</string>
+    <string name="permissions_grant_all">Grant Permissions</string>
+
+</resources>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sign_in_eyebrow">Tài khoản Talkship</string>
+    <string name="sign_in_title">Chào mừng trở lại.</string>
+    <string name="sign_in_body">Đăng nhập để đồng bộ ngôn ngữ, cấu hình và lịch sử hội thoại của bạn.</string>
+    <string name="sign_in_google">Tiếp tục với Google</string>
+    <string name="sign_in_or">hoặc tiếp tục với email</string>
+    <string name="sign_in_email_label">Địa chỉ email</string>
+    <string name="sign_in_email_placeholder">ban@example.com</string>
+    <string name="sign_in_continue">Tiếp tục</string>
+    <string name="sign_in_terms">Bằng việc tiếp tục, bạn đồng ý với Điều khoản dịch vụ và Chính sách bảo mật của Talkship.</string>
+    <string name="sign_in_logo_description">Biểu tượng Talkship</string>
+</resources>
