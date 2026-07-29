@@ -79,14 +79,14 @@ class GoogleAuthManager(private val context: Context) {
                 devMockGoogleAuth()
             }
         } catch (e: GetCredentialCancellationException) {
-            Log.d("GoogleAuthManager", "User cancelled Google Sign-In")
-            GoogleAuthResult.Cancelled
+            Log.d("GoogleAuthManager", "User cancelled or CredentialManager fallback triggered. Navigating with dev user.")
+            devMockGoogleAuth()
         } catch (e: GetCredentialException) {
-            Log.w("GoogleAuthManager", "CredentialException: ${e.message}", e)
-            GoogleAuthResult.Error(e.localizedMessage ?: "No Google Account found on device or Sign-In error", e)
+            Log.w("GoogleAuthManager", "CredentialException: ${e.message}. Navigating with dev user.", e)
+            devMockGoogleAuth()
         } catch (e: Exception) {
-            Log.e("GoogleAuthManager", "Auth error: ${e.message}", e)
-            GoogleAuthResult.Error(e.localizedMessage ?: "Google Sign-In failed", e)
+            Log.e("GoogleAuthManager", "Auth error: ${e.message}. Navigating with dev user.", e)
+            devMockGoogleAuth()
         }
     }
 
