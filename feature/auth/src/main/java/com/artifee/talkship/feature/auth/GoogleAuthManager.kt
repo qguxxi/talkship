@@ -8,12 +8,13 @@ import androidx.credentials.GetCredentialRequest
 import androidx.credentials.exceptions.GetCredentialCancellationException
 import androidx.credentials.exceptions.GetCredentialException
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import java.security.MessageDigest
 import java.util.UUID
 
-// Replace this constant with your Google OAuth Web Client ID from Firebase Console / Google Cloud Console
-const val DEFAULT_WEB_CLIENT_ID = ""
+// Google OAuth Web Client ID loaded dynamically from BuildConfig / local.properties
+val DEFAULT_WEB_CLIENT_ID: String get() = BuildConfig.WEB_CLIENT_ID
 
 data class GoogleUserAccount(
     val id: String,
@@ -47,14 +48,13 @@ class GoogleAuthManager(private val context: Context) {
             val digest = md.digest(rawNonce.toByteArray())
             val hashedNonce = digest.fold("") { str, it -> str + "%02x".format(it) }
 
-            val googleIdOption = GetGoogleIdOption.Builder()
-                .setFilterByAuthorizedAccounts(false)
-                .setServerClientId(clientId)
+            // Use GetSignInWithGoogleOption to force account picker UI on Android
+            val signInWithGoogleOption = GetSignInWithGoogleOption.Builder(clientId)
                 .setNonce(hashedNonce)
                 .build()
 
             val request = GetCredentialRequest.Builder()
-                .addCredentialOption(googleIdOption)
+                .addCredentialOption(signInWithGoogleOption)
                 .build()
 
             val result = credentialManager.getCredential(
@@ -82,8 +82,8 @@ class GoogleAuthManager(private val context: Context) {
             Log.d("GoogleAuthManager", "User cancelled Google Sign-In")
             GoogleAuthResult.Cancelled
         } catch (e: GetCredentialException) {
-            Log.w("GoogleAuthManager", "CredentialException: ${e.message}. Falling back to Dev Auth.", e)
-            devMockGoogleAuth()
+            Log.w("GoogleAuthManager", "CredentialException: ${e.message}", e)
+            GoogleAuthResult.Error(e.localizedMessage ?: "No Google Account found on device or Sign-In error", e)
         } catch (e: Exception) {
             Log.e("GoogleAuthManager", "Auth error: ${e.message}", e)
             GoogleAuthResult.Error(e.localizedMessage ?: "Google Sign-In failed", e)

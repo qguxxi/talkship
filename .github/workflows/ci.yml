@@ -38,6 +38,13 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
+      - name: Setup Mock Google Services for CI
+        run: |
+          mkdir -p app
+          if [ ! -f app/google-services.json ]; then
+            echo '{"project_info":{"project_number":"517041180581","project_id":"talkship-557b2","storage_bucket":"talkship-557b2.appspot.com"},"client":[{"client_info":{"mobilesdk_app_id":"1:517041180581:android:df7191a03539adda","android_client_info":{"package_name":"com.artifee.talkship"}},"oauth_client":[{"client_id":"517041180581-7mgiojpibfk3prela4f32untatdmvatj.apps.googleusercontent.com","client_type":3}],"api_key":[{"current_key":"AIzaSyPlaceholderKey"}],"services":{"appinvite_service":{"other_platform_oauth_client":[]}}}],"configuration_version":"1"}' > app/google-services.json
+          fi
+
       - name: Run Unit Tests
         run: ./gradlew testDebugUnitTest --continue -Pandroid.aapt2FromMavenOverride=
 
@@ -69,6 +76,13 @@ jobs:
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
+
+      - name: Setup Mock Google Services for CI
+        run: |
+          mkdir -p app
+          if [ ! -f app/google-services.json ]; then
+            echo '{"project_info":{"project_number":"517041180581","project_id":"talkship-557b2","storage_bucket":"talkship-557b2.appspot.com"},"client":[{"client_info":{"mobilesdk_app_id":"1:517041180581:android:df7191a03539adda","android_client_info":{"package_name":"com.artifee.talkship"}},"oauth_client":[{"client_id":"517041180581-7mgiojpibfk3prela4f32untatdmvatj.apps.googleusercontent.com","client_type":3}],"api_key":[{"current_key":"AIzaSyPlaceholderKey"}],"services":{"appinvite_service":{"other_platform_oauth_client":[]}}}],"configuration_version":"1"}' > app/google-services.json
+          fi
 
       - name: Build Debug APK
         run: ./gradlew assembleDebug -Pandroid.aapt2FromMavenOverride=

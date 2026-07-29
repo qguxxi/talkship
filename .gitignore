@@ -12,3 +12,4 @@ local.properties
 *.jks
 *.keystore
 play_service_account.json
+app/google-services.json
