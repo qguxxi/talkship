@@ -26,6 +26,9 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
@@ -37,7 +40,7 @@ jobs:
             echo "$SIGNING_KEY_BASE64" | base64 --decode > app/release.jks
             echo "Keystore decoded successfully."
           else
-            echo "WARNING: SIGNING_KEY_BASE64 secret is not configured!"
+            echo "::warning::SIGNING_KEY_BASE64 secret is not configured yet! Building with default configuration."
           fi
 
       - name: Build Release Android App Bundle (.aab)
@@ -49,7 +52,7 @@ jobs:
         run: ./gradlew bundleRelease
 
       - name: Save Service Account Key File
-        if: env.PLAY_CONSOLE_JSON_KEY != ''
+        if: ${{ secrets.PLAY_CONSOLE_JSON_KEY != '' }}
         env:
           PLAY_CONSOLE_JSON_KEY: ${{ secrets.PLAY_CONSOLE_JSON_KEY }}
         run: |
@@ -67,9 +70,7 @@ jobs:
           fi
 
       - name: Deploy to Google Play Console
-        if: env.PLAY_CONSOLE_JSON_KEY != ''
-        env:
-          PLAY_CONSOLE_JSON_KEY: ${{ secrets.PLAY_CONSOLE_JSON_KEY }}
+        if: ${{ secrets.PLAY_CONSOLE_JSON_KEY != '' }}
         uses: rws/google-play-deploy@v1
         with:
           serviceAccountJson: play_service_account.json
