@@ -27,6 +27,7 @@ import com.artifee.talkship.feature.onboarding.TalkshipAppLanguageRoute
 import com.artifee.talkship.feature.onboarding.TalkshipOnboardingRoute
 import com.artifee.talkship.feature.onboarding.TalkshipPermissionRoute
 import com.artifee.talkship.feature.onboarding.updateAppLocale
+import com.artifee.talkship.ui.screens.TalkshipHomeScreen
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -70,6 +71,20 @@ class MainActivity : ComponentActivity() {
             getSharedPreferences(ONBOARDING_PREFERENCES, Context.MODE_PRIVATE)
         }
 
+        var isSignedIn by rememberSaveable {
+            mutableStateOf(preferences.getBoolean(KEY_SIGNED_IN, false))
+        }
+
+        if (isSignedIn) {
+            TalkshipHomeScreen(
+                onSignOut = {
+                    saveSignedIn(false)
+                    isSignedIn = false
+                }
+            )
+            return
+        }
+
         val initialPage = remember {
             when {
                 preferences.getBoolean(KEY_PERMISSIONS_COMPLETED, false) -> 3
@@ -95,7 +110,7 @@ class MainActivity : ComponentActivity() {
 
         val context = LocalContext.current
         val googleAuthManager = remember(context) { GoogleAuthManager(context) }
-        var googleAccount by remember { mutableStateOf<com.artifee.talkship.feature.auth.GoogleUserAccount?>(null) }
+        var googleAccount by remember { mutableStateOf<GoogleUserAccount?>(null) }
         var isGoogleAuthLoading by remember { mutableStateOf(false) }
 
         HorizontalPager(
@@ -138,13 +153,15 @@ class MainActivity : ComponentActivity() {
                         coroutineScope.launch {
                             isGoogleAuthLoading = true
                             when (val result = googleAuthManager.signInWithGoogle()) {
-                                is com.artifee.talkship.feature.auth.GoogleAuthResult.Success -> {
+                                is GoogleAuthResult.Success -> {
                                     googleAccount = result.account
+                                    saveSignedIn(true)
+                                    isSignedIn = true
                                 }
-                                is com.artifee.talkship.feature.auth.GoogleAuthResult.Error -> {
+                                is GoogleAuthResult.Error -> {
                                     // Error logged in GoogleAuthManager
                                 }
-                                is com.artifee.talkship.feature.auth.GoogleAuthResult.Cancelled -> {
+                                is GoogleAuthResult.Cancelled -> {
                                     // User cancelled
                                 }
                             }
@@ -152,7 +169,8 @@ class MainActivity : ComponentActivity() {
                         }
                     },
                     onEmailContinue = {
-                        // Email authentication will be wired in the next auth step.
+                        saveSignedIn(true)
+                        isSignedIn = true
                     }
                 )
             }
@@ -187,11 +205,21 @@ class MainActivity : ComponentActivity() {
             .apply()
     }
 
+    private fun saveSignedIn(signedIn: Boolean) {
+        getSharedPreferences(
+            ONBOARDING_PREFERENCES,
+            Context.MODE_PRIVATE
+        ).edit()
+            .putBoolean(KEY_SIGNED_IN, signedIn)
+            .apply()
+    }
+
     private companion object {
         const val ONBOARDING_PREFERENCES = "talkship_onboarding"
         const val KEY_ONBOARDING_COMPLETED = "completed"
         const val KEY_LANGUAGE_COMPLETED = "language_completed"
         const val KEY_APP_LANGUAGE = "app_language"
         const val KEY_PERMISSIONS_COMPLETED = "permissions_completed"
+        const val KEY_SIGNED_IN = "signed_in"
     }
 }
