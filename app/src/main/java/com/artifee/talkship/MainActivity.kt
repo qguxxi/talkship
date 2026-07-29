@@ -183,31 +183,6 @@ class MainActivity : ComponentActivity() {
                             }
                             isGoogleAuthLoading = false
                         }
-                    },
-                    onEmailContinue = { email ->
-                        saveSignedIn(true)
-                        isSignedIn = true
-                    },
-                    onEmailSubmit = { email, pass, isSignUp ->
-                        coroutineScope.launch {
-                            isGoogleAuthLoading = true
-                            authErrorMessage = null
-                            val res = if (isSignUp) {
-                                firebaseAuthRepo.signUpWithEmail(email, pass)
-                            } else {
-                                firebaseAuthRepo.signInWithEmail(email, pass)
-                            }
-                            when (res) {
-                                is com.artifee.talkship.feature.auth.AuthResult.Success -> {
-                                    saveSignedIn(true)
-                                    isSignedIn = true
-                                }
-                                is com.artifee.talkship.feature.auth.AuthResult.Error -> {
-                                    authErrorMessage = res.message
-                                }
-                            }
-                            isGoogleAuthLoading = false
-                        }
                     }
                 )
             }

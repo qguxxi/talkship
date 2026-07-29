@@ -58,17 +58,13 @@ import androidx.compose.ui.text.style.TextAlign
 @Composable
 fun TalkshipSignInRoute(
     onGoogleSignIn: () -> Unit,
-    onEmailContinue: (String) -> Unit,
     modifier: Modifier = Modifier,
     isLoading: Boolean = false,
     errorMessage: String? = null,
-    googleAccount: GoogleUserAccount? = null,
-    onEmailSubmit: ((email: String, pass: String, isSignUp: Boolean) -> Unit)? = null
+    googleAccount: GoogleUserAccount? = null
 ) {
     TalkshipSignInScreen(
         onGoogleSignIn = onGoogleSignIn,
-        onEmailContinue = onEmailContinue,
-        onEmailSubmit = onEmailSubmit,
         modifier = modifier,
         isLoading = isLoading,
         errorMessage = errorMessage,
@@ -79,22 +75,11 @@ fun TalkshipSignInRoute(
 @Composable
 fun TalkshipSignInScreen(
     onGoogleSignIn: () -> Unit,
-    onEmailContinue: (String) -> Unit,
     modifier: Modifier = Modifier,
     isLoading: Boolean = false,
     errorMessage: String? = null,
-    googleAccount: GoogleUserAccount? = null,
-    onEmailSubmit: ((email: String, pass: String, isSignUp: Boolean) -> Unit)? = null
+    googleAccount: GoogleUserAccount? = null
 ) {
-    var email by rememberSaveable { mutableStateOf("") }
-    var password by rememberSaveable { mutableStateOf("") }
-    var isSignUpMode by rememberSaveable { mutableStateOf(false) }
-
-    val emailIsValid = email.trim().let {
-        it.contains("@") && it.substringAfter("@").contains(".")
-    }
-    val passwordIsValid = password.length >= 6
-    val formIsValid = emailIsValid && passwordIsValid
     val scrollState = rememberScrollState()
 
     Scaffold(
@@ -146,7 +131,7 @@ fun TalkshipSignInScreen(
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     Text(
-                        text = if (isSignUpMode) "Tạo tài khoản mới" else stringResource(R.string.sign_in_title),
+                        text = stringResource(R.string.sign_in_title),
                         style = MaterialTheme.typography.displaySmall,
                         color = TalkshipInk
                     )
@@ -224,114 +209,11 @@ fun TalkshipSignInScreen(
                         Spacer(modifier = Modifier.height(16.dp))
                     }
 
-                    TalkshipOutlineButton(
+                    TalkshipPrimaryButton(
                         text = if (isLoading) "Đang kết nối Google..." else stringResource(R.string.sign_in_google),
                         onClick = onGoogleSignIn,
                         modifier = Modifier.fillMaxWidth(),
-                        enabled = !isLoading,
-                        leadingContent = {
-                            Image(
-                                painter = painterResource(R.drawable.ic_google),
-                                contentDescription = null,
-                                modifier = Modifier.size(20.dp)
-                            )
-                        }
-                    )
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 20.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        HorizontalDivider(
-                            modifier = Modifier.weight(1f),
-                            color = TalkshipHairline
-                        )
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Text(
-                            text = stringResource(R.string.sign_in_or).uppercase(),
-                            style = TalkshipMonoCaptionSm,
-                            color = TalkshipBodyMid
-                        )
-                        Spacer(modifier = Modifier.width(12.dp))
-                        HorizontalDivider(
-                            modifier = Modifier.weight(1f),
-                            color = TalkshipHairline
-                        )
-                    }
-
-                    OutlinedTextField(
-                        value = email,
-                        onValueChange = { email = it },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true,
-                        label = {
-                            Text(stringResource(R.string.sign_in_email_label))
-                        },
-                        placeholder = {
-                            Text(stringResource(R.string.sign_in_email_placeholder))
-                        },
-                        shape = MaterialTheme.shapes.medium,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = TalkshipInk,
-                            unfocusedTextColor = TalkshipInk,
-                            focusedBorderColor = TalkshipInk,
-                            unfocusedBorderColor = TalkshipHairline,
-                            focusedLabelColor = TalkshipInk,
-                            unfocusedLabelColor = TalkshipBodyMid,
-                            cursorColor = TalkshipInk
-                        )
-                    )
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    OutlinedTextField(
-                        value = password,
-                        onValueChange = { password = it },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true,
-                        visualTransformation = PasswordVisualTransformation(),
-                        label = {
-                            Text(stringResource(R.string.sign_in_password_label))
-                        },
-                        placeholder = {
-                            Text(stringResource(R.string.sign_in_password_placeholder))
-                        },
-                        shape = MaterialTheme.shapes.medium,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = TalkshipInk,
-                            unfocusedTextColor = TalkshipInk,
-                            focusedBorderColor = TalkshipInk,
-                            unfocusedBorderColor = TalkshipHairline,
-                            focusedLabelColor = TalkshipInk,
-                            unfocusedLabelColor = TalkshipBodyMid,
-                            cursorColor = TalkshipInk
-                        )
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    TalkshipPrimaryButton(
-                        text = if (isLoading) "Đang xử lý..." else if (isSignUpMode) stringResource(R.string.sign_up_continue) else stringResource(R.string.sign_in_continue),
-                        onClick = {
-                            val trimmedEmail = email.trim()
-                            val trimmedPass = password.trim()
-                            if (onEmailSubmit != null) {
-                                onEmailSubmit(trimmedEmail, trimmedPass, isSignUpMode)
-                            } else {
-                                onEmailContinue(trimmedEmail)
-                            }
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        enabled = formIsValid && !isLoading
-                    )
-
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    TalkshipOutlineButton(
-                        text = if (isSignUpMode) stringResource(R.string.sign_in_mode_signup) else stringResource(R.string.sign_in_mode_login),
-                        onClick = { isSignUpMode = !isSignUpMode },
-                        modifier = Modifier.fillMaxWidth()
+                        enabled = !isLoading
                     )
 
                     Spacer(modifier = Modifier.weight(1f, fill = false))
@@ -354,8 +236,7 @@ fun TalkshipSignInScreen(
 private fun TalkshipSignInPreview() {
     TalkshipTheme {
         TalkshipSignInScreen(
-            onGoogleSignIn = {},
-            onEmailContinue = {}
+            onGoogleSignIn = {}
         )
     }
 }
