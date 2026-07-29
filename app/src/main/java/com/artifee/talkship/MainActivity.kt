@@ -110,8 +110,10 @@ class MainActivity : ComponentActivity() {
 
         val context = LocalContext.current
         val googleAuthManager = remember(context) { GoogleAuthManager(context) }
+        val firebaseAuthRepo = remember { com.artifee.talkship.feature.auth.FirebaseAuthRepository() }
         var googleAccount by remember { mutableStateOf<GoogleUserAccount?>(null) }
         var isGoogleAuthLoading by remember { mutableStateOf(false) }
+        var authErrorMessage by remember { mutableStateOf<String?>(null) }
 
         HorizontalPager(
             state = pagerState,
@@ -148,18 +150,32 @@ class MainActivity : ComponentActivity() {
                 )
                 3 -> TalkshipSignInRoute(
                     isLoading = isGoogleAuthLoading,
+                    errorMessage = authErrorMessage,
                     googleAccount = googleAccount,
                     onGoogleSignIn = {
                         coroutineScope.launch {
                             isGoogleAuthLoading = true
+                            authErrorMessage = null
                             when (val result = googleAuthManager.signInWithGoogle()) {
                                 is GoogleAuthResult.Success -> {
                                     googleAccount = result.account
-                                    saveSignedIn(true)
-                                    isSignedIn = true
+                                    if (result.account.idToken.isNotBlank() && !result.account.idToken.startsWith("mock_")) {
+                                        when (val firebaseResult = firebaseAuthRepo.signInWithGoogleToken(result.account.idToken)) {
+                                            is com.artifee.talkship.feature.auth.AuthResult.Success -> {
+                                                saveSignedIn(true)
+                                                isSignedIn = true
+                                            }
+                                            is com.artifee.talkship.feature.auth.AuthResult.Error -> {
+                                                authErrorMessage = firebaseResult.message
+                                            }
+                                        }
+                                    } else {
+                                        saveSignedIn(true)
+                                        isSignedIn = true
+                                    }
                                 }
                                 is GoogleAuthResult.Error -> {
-                                    // Error logged in GoogleAuthManager
+                                    authErrorMessage = result.message
                                 }
                                 is GoogleAuthResult.Cancelled -> {
                                     // User cancelled
@@ -168,9 +184,30 @@ class MainActivity : ComponentActivity() {
                             isGoogleAuthLoading = false
                         }
                     },
-                    onEmailContinue = {
+                    onEmailContinue = { email ->
                         saveSignedIn(true)
                         isSignedIn = true
+                    },
+                    onEmailSubmit = { email, pass, isSignUp ->
+                        coroutineScope.launch {
+                            isGoogleAuthLoading = true
+                            authErrorMessage = null
+                            val res = if (isSignUp) {
+                                firebaseAuthRepo.signUpWithEmail(email, pass)
+                            } else {
+                                firebaseAuthRepo.signInWithEmail(email, pass)
+                            }
+                            when (res) {
+                                is com.artifee.talkship.feature.auth.AuthResult.Success -> {
+                                    saveSignedIn(true)
+                                    isSignedIn = true
+                                }
+                                is com.artifee.talkship.feature.auth.AuthResult.Error -> {
+                                    authErrorMessage = res.message
+                                }
+                            }
+                            isGoogleAuthLoading = false
+                        }
                     }
                 )
             }

@@ -7,7 +7,12 @@
     <string name="sign_in_or">hoặc tiếp tục với email</string>
     <string name="sign_in_email_label">Địa chỉ email</string>
     <string name="sign_in_email_placeholder">ban@example.com</string>
-    <string name="sign_in_continue">Tiếp tục</string>
+    <string name="sign_in_password_label">Mật khẩu</string>
+    <string name="sign_in_password_placeholder">••••••••</string>
+    <string name="sign_in_continue">Đăng nhập</string>
+    <string name="sign_up_continue">Tạo tài khoản</string>
+    <string name="sign_in_mode_login">Chưa có tài khoản? Đăng ký</string>
+    <string name="sign_in_mode_signup">Đã có tài khoản? Đăng nhập</string>
     <string name="sign_in_terms">Bằng việc tiếp tục, bạn đồng ý với Điều khoản dịch vụ và Chính sách bảo mật của Talkship.</string>
     <string name="sign_in_logo_description">Biểu tượng Talkship</string>
 </resources>

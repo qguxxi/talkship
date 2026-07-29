@@ -7,7 +7,12 @@
     <string name="sign_in_or">or continue with email</string>
     <string name="sign_in_email_label">Email address</string>
     <string name="sign_in_email_placeholder">you@example.com</string>
-    <string name="sign_in_continue">Continue</string>
+    <string name="sign_in_password_label">Password</string>
+    <string name="sign_in_password_placeholder">••••••••</string>
+    <string name="sign_in_continue">Sign In</string>
+    <string name="sign_up_continue">Create Account</string>
+    <string name="sign_in_mode_login">Need an account? Sign Up</string>
+    <string name="sign_in_mode_signup">Already have an account? Sign In</string>
     <string name="sign_in_terms">By continuing, you agree to Talkship’s Terms of Service and acknowledge the Privacy Policy.</string>
     <string name="sign_in_logo_description">Talkship logo</string>
 </resources>

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "517041180581",
+    "project_id": "talkship-557b2",
+    "storage_bucket": "talkship-557b2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:517041180581:android:df7191a03539adda",
+        "android_client_info": {
+          "package_name": "com.artifee.talkship"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyPlaceholderKeyForFirebaseServices"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
