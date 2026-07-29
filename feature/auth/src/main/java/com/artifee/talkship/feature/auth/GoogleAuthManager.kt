@@ -12,6 +12,9 @@ import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import java.security.MessageDigest
 import java.util.UUID
 
+// Replace this constant with your Google OAuth Web Client ID from Firebase Console / Google Cloud Console
+const val DEFAULT_WEB_CLIENT_ID = ""
+
 data class GoogleUserAccount(
     val id: String,
     val email: String,
@@ -31,9 +34,10 @@ sealed interface GoogleAuthResult {
 class GoogleAuthManager(private val context: Context) {
     private val credentialManager: CredentialManager = CredentialManager.create(context)
 
-    suspend fun signInWithGoogle(webClientId: String? = null): GoogleAuthResult {
-        if (webClientId.isNullOrBlank() || webClientId.contains("YOUR_WEB_CLIENT_ID")) {
-            Log.d("GoogleAuthManager", "Using Dev Mock Google Auth Account")
+    suspend fun signInWithGoogle(webClientId: String? = DEFAULT_WEB_CLIENT_ID): GoogleAuthResult {
+        val clientId = if (webClientId.isNullOrBlank()) DEFAULT_WEB_CLIENT_ID else webClientId
+        if (clientId.isBlank() || clientId.contains("YOUR_WEB_CLIENT_ID")) {
+            Log.d("GoogleAuthManager", "No Web Client ID specified. Using Dev Auth Fallback.")
             return devMockGoogleAuth()
         }
 
@@ -45,7 +49,7 @@ class GoogleAuthManager(private val context: Context) {
 
             val googleIdOption = GetGoogleIdOption.Builder()
                 .setFilterByAuthorizedAccounts(false)
-                .setServerClientId(webClientId)
+                .setServerClientId(clientId)
                 .setNonce(hashedNonce)
                 .build()
 
