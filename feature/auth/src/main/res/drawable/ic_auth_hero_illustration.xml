@@ -1,0 +1,117 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="280dp"
+    android:height="180dp"
+    android:viewportWidth="280"
+    android:viewportHeight="180">
+
+    <!-- Outer Ambient Glow Ring 1 -->
+    <path
+        android:pathData="M140,90 m-75,0 a75,75 0 1,0 150,0 a75,75 0 1,0 -150,0"
+        android:strokeWidth="1.5"
+        android:strokeColor="#33FF5848" />
+
+    <!-- Outer Ambient Glow Ring 2 -->
+    <path
+        android:pathData="M140,90 m-58,0 a58,58 0 1,0 116,0 a58,58 0 1,0 -116,0"
+        android:strokeWidth="1.2"
+        android:strokeColor="#4DFF5848" />
+
+    <!-- Dashed Orbit Ring -->
+    <path
+        android:pathData="M140,90 m-42,0 a42,42 0 1,0 84,0 a42,42 0 1,0 -84,0"
+        android:strokeWidth="1"
+        android:strokeColor="#80FFFFFF" />
+
+    <!-- Central Glowing Radial Background -->
+    <path android:pathData="M70,20 h140 a20,20 0 0,1 20,20 v100 a20,20 0 0,1 -20,20 h-140 a20,20 0 0,1 -20,-20 v-100 a20,20 0 0,1 20,-20 z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:centerX="140"
+                android:centerY="90"
+                android:gradientRadius="110"
+                android:type="radial">
+                <item android:color="#35FF5848" android:offset="0.0" />
+                <item android:color="#156C38FF" android:offset="0.6" />
+                <item android:color="#000A0A0A" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Glassmorphic Inner Hero Card -->
+    <path
+        android:pathData="M65,35 h150 a16,16 0 0,1 16,16 v78 a16,16 0 0,1 -16,16 h-150 a16,16 0 0,1 -16,-16 v-78 a16,16 0 0,1 16,-16 z"
+        android:fillColor="#1F1E24"
+        android:strokeWidth="1"
+        android:strokeColor="#33FFFFFF" />
+
+    <!-- Left Speech Bubble Node -->
+    <path
+        android:pathData="M35,65 a18,18 0 1,0 0,36 a18,18 0 1,0 0,-36"
+        android:fillColor="#2A2533"
+        android:strokeWidth="1"
+        android:strokeColor="#4DFF5848" />
+    <path
+        android:pathData="M27,83 l-4,8 l8,-3"
+        android:fillColor="#2A2533"
+        android:strokeWidth="1"
+        android:strokeColor="#4DFF5848" />
+
+    <!-- Soundwave lines in Left Node -->
+    <path
+        android:pathData="M27,83 v-12 M32,87 v-20 M37,85 v-16 M42,82 v-10"
+        android:strokeWidth="2"
+        android:strokeColor="#FF5848"
+        android:strokeLineCap="round" />
+
+    <!-- Right Speech Bubble Node -->
+    <path
+        android:pathData="M245,65 a18,18 0 1,0 0,36 a18,18 0 1,0 0,-36"
+        android:fillColor="#2A2533"
+        android:strokeWidth="1"
+        android:strokeColor="#4D6C38FF" />
+    <path
+        android:pathData="M249,83 l8,3 l-4,-8"
+        android:fillColor="#2A2533"
+        android:strokeWidth="1"
+        android:strokeColor="#4D6C38FF" />
+
+    <!-- Soundwave lines in Right Node -->
+    <path
+        android:pathData="M237,82 v-10 M242,85 v-16 M247,87 v-20 M252,83 v-12"
+        android:strokeWidth="2"
+        android:strokeColor="#9B7BFF"
+        android:strokeLineCap="round" />
+
+    <!-- Connection Arcs between nodes -->
+    <path
+        android:pathData="M52,70 Q140,40 227,70"
+        android:fillColor="#00000000"
+        android:strokeWidth="1.5"
+        android:strokeColor="#66FF5848" />
+    <path
+        android:pathData="M52,95 Q140,125 227,95"
+        android:fillColor="#00000000"
+        android:strokeWidth="1.5"
+        android:strokeColor="#669B7BFF" />
+
+    <!-- Central Talkship Brand Red Badge -->
+    <path
+        android:pathData="M116,66 h48 a12,12 0 0,1 12,12 v32 a12,12 0 0,1 -12,12 h-48 a12,12 0 0,1 -12,-12 v-32 a12,12 0 0,1 12,-12 z"
+        android:fillColor="#FF5848" />
+
+    <!-- White Soundbars inside Central Badge -->
+    <path
+        android:pathData="M127,97 v-18 M135,103 v-30 M144,100 v-24 M153,95 v-14"
+        android:strokeWidth="3.5"
+        android:strokeColor="#FFFFFF"
+        android:strokeLineCap="round" />
+
+    <!-- Small Glowing Satellite Dots -->
+    <path
+        android:pathData="M95,50 m-3,0 a3,3 0 1,0 6,0 a3,3 0 1,0 -6,0"
+        android:fillColor="#FF5848" />
+    <path
+        android:pathData="M185,130 m-3,0 a3,3 0 1,0 6,0 a3,3 0 1,0 -6,0"
+        android:fillColor="#9B7BFF" />
+</vector>

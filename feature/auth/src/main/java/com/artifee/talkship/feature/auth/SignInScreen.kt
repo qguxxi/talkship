@@ -160,7 +160,22 @@ fun TalkshipSignInScreen(
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(36.dp))
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(180.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Image(
+                            painter = painterResource(R.drawable.ic_auth_hero_illustration),
+                            contentDescription = "Talkship AI Translation Hero",
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(28.dp))
 
                     if (googleAccount != null) {
                         Surface(
@@ -213,7 +228,14 @@ fun TalkshipSignInScreen(
                         text = if (isLoading) "Đang kết nối Google..." else stringResource(R.string.sign_in_google),
                         onClick = onGoogleSignIn,
                         modifier = Modifier.fillMaxWidth(),
-                        enabled = !isLoading
+                        enabled = !isLoading,
+                        leadingContent = {
+                            Image(
+                                painter = painterResource(R.drawable.ic_google),
+                                contentDescription = null,
+                                modifier = Modifier.size(22.dp)
+                            )
+                        }
                     )
 
                     Spacer(modifier = Modifier.weight(1f, fill = false))
