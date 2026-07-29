@@ -19,6 +19,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import com.artifee.talkship.core.designsystem.theme.TalkshipTheme
+import com.artifee.talkship.feature.auth.GoogleAuthManager
+import com.artifee.talkship.feature.auth.GoogleAuthResult
+import com.artifee.talkship.feature.auth.GoogleUserAccount
 import com.artifee.talkship.feature.auth.TalkshipSignInRoute
 import com.artifee.talkship.feature.onboarding.TalkshipAppLanguageRoute
 import com.artifee.talkship.feature.onboarding.TalkshipOnboardingRoute
@@ -90,6 +93,11 @@ class MainActivity : ComponentActivity() {
             }
         }
 
+        val context = LocalContext.current
+        val googleAuthManager = remember(context) { GoogleAuthManager(context) }
+        var googleAccount by remember { mutableStateOf<com.artifee.talkship.feature.auth.GoogleUserAccount?>(null) }
+        var isGoogleAuthLoading by remember { mutableStateOf(false) }
+
         HorizontalPager(
             state = pagerState,
             userScrollEnabled = true
@@ -124,9 +132,24 @@ class MainActivity : ComponentActivity() {
                     }
                 )
                 3 -> TalkshipSignInRoute(
+                    isLoading = isGoogleAuthLoading,
+                    googleAccount = googleAccount,
                     onGoogleSignIn = {
-                        // Authentication provider integration is intentionally
-                        // deferred until the sign-in UI is approved.
+                        coroutineScope.launch {
+                            isGoogleAuthLoading = true
+                            when (val result = googleAuthManager.signInWithGoogle()) {
+                                is com.artifee.talkship.feature.auth.GoogleAuthResult.Success -> {
+                                    googleAccount = result.account
+                                }
+                                is com.artifee.talkship.feature.auth.GoogleAuthResult.Error -> {
+                                    // Error logged in GoogleAuthManager
+                                }
+                                is com.artifee.talkship.feature.auth.GoogleAuthResult.Cancelled -> {
+                                    // User cancelled
+                                }
+                            }
+                            isGoogleAuthLoading = false
+                        }
                     },
                     onEmailContinue = {
                         // Email authentication will be wired in the next auth step.

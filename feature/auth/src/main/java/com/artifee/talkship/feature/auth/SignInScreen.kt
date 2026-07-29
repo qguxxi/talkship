@@ -56,12 +56,16 @@ import com.artifee.talkship.core.designsystem.theme.TalkshipTheme
 fun TalkshipSignInRoute(
     onGoogleSignIn: () -> Unit,
     onEmailContinue: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isLoading: Boolean = false,
+    googleAccount: GoogleUserAccount? = null
 ) {
     TalkshipSignInScreen(
         onGoogleSignIn = onGoogleSignIn,
         onEmailContinue = onEmailContinue,
-        modifier = modifier
+        modifier = modifier,
+        isLoading = isLoading,
+        googleAccount = googleAccount
     )
 }
 
@@ -69,7 +73,9 @@ fun TalkshipSignInRoute(
 fun TalkshipSignInScreen(
     onGoogleSignIn: () -> Unit,
     onEmailContinue: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isLoading: Boolean = false,
+    googleAccount: GoogleUserAccount? = null
 ) {
     var email by rememberSaveable { mutableStateOf("") }
     val emailIsValid = email.trim().let {
@@ -118,38 +124,87 @@ fun TalkshipSignInScreen(
                         )
                     }
 
-                Spacer(modifier = Modifier.height(48.dp))
-                Text(
-                    text = stringResource(R.string.sign_in_eyebrow).uppercase(),
-                    style = TalkshipMonoCaptionSm,
-                    color = TalkshipAccentTwilight
-                )
-                Spacer(modifier = Modifier.height(12.dp))
-                Text(
-                    text = stringResource(R.string.sign_in_title),
-                    style = MaterialTheme.typography.displaySmall,
-                    color = TalkshipInk
-                )
-                Spacer(modifier = Modifier.height(12.dp))
-                Text(
-                    text = stringResource(R.string.sign_in_body),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = TalkshipBodyMid
-                )
+                    Spacer(modifier = Modifier.height(48.dp))
+                    Text(
+                        text = stringResource(R.string.sign_in_eyebrow).uppercase(),
+                        style = TalkshipMonoCaptionSm,
+                        color = TalkshipAccentTwilight
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        text = stringResource(R.string.sign_in_title),
+                        style = MaterialTheme.typography.displaySmall,
+                        color = TalkshipInk
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        text = stringResource(R.string.sign_in_body),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = TalkshipBodyMid
+                    )
 
-                Spacer(modifier = Modifier.height(36.dp))
-                TalkshipOutlineButton(
-                    text = stringResource(R.string.sign_in_google),
-                    onClick = onGoogleSignIn,
-                    modifier = Modifier.fillMaxWidth(),
-                    leadingContent = {
-                        Image(
-                            painter = painterResource(R.drawable.ic_google),
-                            contentDescription = null,
-                            modifier = Modifier.size(20.dp)
-                        )
+                    Spacer(modifier = Modifier.height(36.dp))
+
+                    if (googleAccount != null) {
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = MaterialTheme.shapes.medium,
+                            color = TalkshipCanvasCard,
+                            border = BorderStroke(1.dp, TalkshipAccentSunset.copy(alpha = 0.5f))
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(16.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Surface(
+                                    modifier = Modifier.size(40.dp),
+                                    shape = CircleShape,
+                                    color = TalkshipAccentSunset.copy(alpha = 0.2f)
+                                ) {
+                                    Box(contentAlignment = Alignment.Center) {
+                                        Text(
+                                            text = (googleAccount.displayName?.firstOrNull() ?: 'G').toString(),
+                                            style = MaterialTheme.typography.titleMedium,
+                                            color = TalkshipInk
+                                        )
+                                    }
+                                }
+                                Spacer(modifier = Modifier.width(14.dp))
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = googleAccount.displayName ?: "Google User",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        color = TalkshipInk
+                                    )
+                                    Text(
+                                        text = googleAccount.email,
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = TalkshipBodyMid
+                                    )
+                                }
+                                Text(
+                                    text = "✓",
+                                    style = MaterialTheme.typography.titleLarge,
+                                    color = TalkshipAccentSunset
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
                     }
-                )
+
+                    TalkshipOutlineButton(
+                        text = if (isLoading) "Đang kết nối Google..." else stringResource(R.string.sign_in_google),
+                        onClick = onGoogleSignIn,
+                        modifier = Modifier.fillMaxWidth(),
+                        enabled = !isLoading,
+                        leadingContent = {
+                            Image(
+                                painter = painterResource(R.drawable.ic_google),
+                                contentDescription = null,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                    )
 
                 Row(
                     modifier = Modifier
