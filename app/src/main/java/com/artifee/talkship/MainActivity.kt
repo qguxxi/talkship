@@ -159,19 +159,12 @@ class MainActivity : ComponentActivity() {
                             when (val result = googleAuthManager.signInWithGoogle()) {
                                 is GoogleAuthResult.Success -> {
                                     googleAccount = result.account
+                                    saveSignedIn(true)
+                                    isSignedIn = true
                                     if (result.account.idToken.isNotBlank() && !result.account.idToken.startsWith("mock_")) {
-                                        when (val firebaseResult = firebaseAuthRepo.signInWithGoogleToken(result.account.idToken)) {
-                                            is com.artifee.talkship.feature.auth.AuthResult.Success -> {
-                                                saveSignedIn(true)
-                                                isSignedIn = true
-                                            }
-                                            is com.artifee.talkship.feature.auth.AuthResult.Error -> {
-                                                authErrorMessage = firebaseResult.message
-                                            }
+                                        coroutineScope.launch {
+                                            firebaseAuthRepo.signInWithGoogleToken(result.account.idToken)
                                         }
-                                    } else {
-                                        saveSignedIn(true)
-                                        isSignedIn = true
                                     }
                                 }
                                 is GoogleAuthResult.Error -> {
