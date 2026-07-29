@@ -42,7 +42,9 @@ import com.artifee.talkship.core.designsystem.theme.TalkshipInk
 import com.artifee.talkship.core.designsystem.theme.TalkshipTheme
 
 @Composable
-fun TalkshipHomeScreen() {
+fun TalkshipHomeScreen(
+    onSignOut: (() -> Unit)? = null
+) {
     Scaffold(
         containerColor = TalkshipCanvas
     ) { innerPadding ->
@@ -95,7 +97,16 @@ fun TalkshipHomeScreen() {
                             )
                         }
                     }
-                    TalkshipPillTag(text = "alpha")
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        if (onSignOut != null) {
+                            TalkshipOutlineButton(
+                                text = "Đăng xuất",
+                                onClick = onSignOut
+                            )
+                            Spacer(modifier = Modifier.size(8.dp))
+                        }
+                        TalkshipPillTag(text = "alpha")
+                    }
                 }
 
                 Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {

@@ -19,11 +19,15 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import com.artifee.talkship.core.designsystem.theme.TalkshipTheme
+import com.artifee.talkship.feature.auth.GoogleAuthManager
+import com.artifee.talkship.feature.auth.GoogleAuthResult
+import com.artifee.talkship.feature.auth.GoogleUserAccount
 import com.artifee.talkship.feature.auth.TalkshipSignInRoute
 import com.artifee.talkship.feature.onboarding.TalkshipAppLanguageRoute
 import com.artifee.talkship.feature.onboarding.TalkshipOnboardingRoute
 import com.artifee.talkship.feature.onboarding.TalkshipPermissionRoute
 import com.artifee.talkship.feature.onboarding.updateAppLocale
+import com.artifee.talkship.ui.screens.TalkshipHomeScreen
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -67,6 +71,20 @@ class MainActivity : ComponentActivity() {
             getSharedPreferences(ONBOARDING_PREFERENCES, Context.MODE_PRIVATE)
         }
 
+        var isSignedIn by rememberSaveable {
+            mutableStateOf(preferences.getBoolean(KEY_SIGNED_IN, false))
+        }
+
+        if (isSignedIn) {
+            TalkshipHomeScreen(
+                onSignOut = {
+                    saveSignedIn(false)
+                    isSignedIn = false
+                }
+            )
+            return
+        }
+
         val initialPage = remember {
             when {
                 preferences.getBoolean(KEY_PERMISSIONS_COMPLETED, false) -> 3
@@ -89,6 +107,13 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+
+        val context = LocalContext.current
+        val googleAuthManager = remember(context) { GoogleAuthManager(context) }
+        val firebaseAuthRepo = remember { com.artifee.talkship.feature.auth.FirebaseAuthRepository() }
+        var googleAccount by remember { mutableStateOf<GoogleUserAccount?>(null) }
+        var isGoogleAuthLoading by remember { mutableStateOf(false) }
+        var authErrorMessage by remember { mutableStateOf<String?>(null) }
 
         HorizontalPager(
             state = pagerState,
@@ -124,12 +149,33 @@ class MainActivity : ComponentActivity() {
                     }
                 )
                 3 -> TalkshipSignInRoute(
+                    isLoading = isGoogleAuthLoading,
+                    errorMessage = authErrorMessage,
+                    googleAccount = googleAccount,
                     onGoogleSignIn = {
-                        // Authentication provider integration is intentionally
-                        // deferred until the sign-in UI is approved.
-                    },
-                    onEmailContinue = {
-                        // Email authentication will be wired in the next auth step.
+                        coroutineScope.launch {
+                            isGoogleAuthLoading = true
+                            authErrorMessage = null
+                            when (val result = googleAuthManager.signInWithGoogle()) {
+                                is GoogleAuthResult.Success -> {
+                                    googleAccount = result.account
+                                    saveSignedIn(true)
+                                    isSignedIn = true
+                                    if (result.account.idToken.isNotBlank() && !result.account.idToken.startsWith("mock_")) {
+                                        coroutineScope.launch {
+                                            firebaseAuthRepo.signInWithGoogleToken(result.account.idToken)
+                                        }
+                                    }
+                                }
+                                is GoogleAuthResult.Error -> {
+                                    authErrorMessage = result.message
+                                }
+                                is GoogleAuthResult.Cancelled -> {
+                                    // User cancelled
+                                }
+                            }
+                            isGoogleAuthLoading = false
+                        }
                     }
                 )
             }
@@ -164,11 +210,21 @@ class MainActivity : ComponentActivity() {
             .apply()
     }
 
+    private fun saveSignedIn(signedIn: Boolean) {
+        getSharedPreferences(
+            ONBOARDING_PREFERENCES,
+            Context.MODE_PRIVATE
+        ).edit()
+            .putBoolean(KEY_SIGNED_IN, signedIn)
+            .apply()
+    }
+
     private companion object {
         const val ONBOARDING_PREFERENCES = "talkship_onboarding"
         const val KEY_ONBOARDING_COMPLETED = "completed"
         const val KEY_LANGUAGE_COMPLETED = "language_completed"
         const val KEY_APP_LANGUAGE = "app_language"
         const val KEY_PERMISSIONS_COMPLETED = "permissions_completed"
+        const val KEY_SIGNED_IN = "signed_in"
     }
 }

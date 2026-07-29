@@ -64,7 +64,8 @@ fun TalkshipPrimaryButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    leadingContent: (@Composable () -> Unit)? = null
 ) {
     Button(
         onClick = onClick,
@@ -80,6 +81,10 @@ fun TalkshipPrimaryButton(
         ),
         border = BorderStroke(1.dp, TalkshipPrimary.copy(alpha = if (enabled) 1f else 0.2f))
     ) {
+        if (leadingContent != null) {
+            leadingContent()
+            Spacer(modifier = Modifier.width(10.dp))
+        }
         Text(text = text, style = MaterialTheme.typography.labelLarge)
     }
 }

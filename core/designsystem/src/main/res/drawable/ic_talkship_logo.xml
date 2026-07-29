@@ -1,0 +1,22 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="22dp"
+    android:height="23dp"
+    android:viewportWidth="22"
+    android:viewportHeight="23">
+    <!-- Talkship Brand Logo Vector Asset -->
+    <path
+        android:fillColor="#FF5848"
+        android:pathData="M 2,0 L 20,0 A 2,2 0 0,1 22,2 L 22,21 A 2,2 0 0,1 20,23 L 2,23 A 2,2 0 0,1 0,21 L 0,2 A 2,2 0 0,1 2,0 Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M15.5,8.75 H6.5 V10.25 H15.5 V8.75 Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M15.5,14.75 H6.5 V16.25 H15.5 V14.75 Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M17.75,5.75 H4.25 V7.25 H17.75 V5.75 Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M17.75,11.75 H4.25 V13.25 H17.75 V11.75 Z" />
+</vector>
